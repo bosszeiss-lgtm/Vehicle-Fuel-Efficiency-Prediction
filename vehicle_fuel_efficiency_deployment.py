@@ -40,9 +40,10 @@ if st.button("Predict Miles Per Gallon (mpg)"):
     })
 
     # Apply encoder
-if st.button("Predict Miles Per Gallon(mpg)"):
-  for col in encoder:
-    df(col) == encoder[col].transform(df[col])
+if st.button("Predict Miles Per Gallon (mpg)"):
 
-prediction = model.predict(df)
-st.success(f"Predicted mpg: {prediction[0].2f}")
+    for col in encoder:
+        df[col] = encoder[col].transform(df[col])
+
+    prediction = model.predict(df)
+    st.success(f"Predicted mpg: {prediction[0]:.2f}")
