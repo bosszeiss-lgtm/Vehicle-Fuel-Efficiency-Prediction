@@ -50,9 +50,17 @@ if st.button("Predict Miles Per Gallon (mpg)"):
     try:
         # Make prediction
         prediction = model.predict(df)
-        # Ensure prediction is converted to float for formatting
-        pred_value = float(prediction[0])
-        st.success(f"Predicted MPG: {pred_value:.2f} miles per gallon")
+        pred_value = prediction[0]
+        
+        # Handle both numeric and categorical predictions
+        try:
+            # Try to convert to float (numeric prediction)
+            pred_float = float(pred_value)
+            st.success(f"Predicted MPG: {pred_float:.2f} miles per gallon")
+        except (ValueError, TypeError):
+            # If conversion fails, treat as categorical/string prediction
+            st.success(f"Predicted Fuel Efficiency Category: {pred_value}")
+            st.info("This model classifies fuel efficiency into categories rather than predicting exact MPG values.")
         
         # Display input summary
         st.info("Input Summary:")
