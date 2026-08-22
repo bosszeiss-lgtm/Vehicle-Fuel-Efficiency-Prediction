@@ -38,23 +38,25 @@ origin = st.number_input("Enter the origin (1=USA, 2=Europe, 3=Japan)", min_valu
 if st.button("Predict Miles Per Gallon (mpg)"):
     # Create DataFrame with feature names matching training data
     df = pd.DataFrame({
-        "cylinders": [cylinders],
-        "displacement": [displacement],
-        "horsepower": [horsepower],
-        "weight": [weight],
-        "acceleration": [acceleration],
-        "model year": [model_year],
-        "origin": [origin]
+        "cylinders": [int(cylinders)],
+        "displacement": [float(displacement)],
+        "horsepower": [float(horsepower)],
+        "weight": [float(weight)],
+        "acceleration": [float(acceleration)],
+        "model year": [int(model_year)],
+        "origin": [int(origin)]
     })
     
     try:
         # Make prediction
         prediction = model.predict(df)
-        st.success(f"Predicted MPG: {prediction[0]:.2f} miles per gallon")
+        # Ensure prediction is converted to float for formatting
+        pred_value = float(prediction[0])
+        st.success(f"Predicted MPG: {pred_value:.2f} miles per gallon")
         
         # Display input summary
         st.info("Input Summary:")
         st.dataframe(df)
     except Exception as e:
-        st.error(f"Error making prediction: {e}")
+        st.error(f"Error making prediction: {str(e)}")
         st.error("Please check that all input values are valid.")
