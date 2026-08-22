@@ -10,40 +10,51 @@ Original file is located at
 import streamlit as st
 import pandas as pd
 import joblib
+import os
 
-# Load model and encoder
-model = joblib.load("Vehicle_Fuel_Efficiency_Project.pkl")
-encoder = joblib.load("Label_Encoder.pkl")
+# Load model
+model_path = "Vehicle_Fuel_Efficiency_Prediction .pkl"
+if not os.path.exists(model_path):
+    st.error(f"Model file not found: {model_path}")
+    st.stop()
+
+try:
+    model = joblib.load(model_path)
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.stop()
 
 st.title("Vehicle Fuel Efficiency Prediction")
 
 # Input values
-cylinders = st.number_input("Enter the number of cylinders")
-displacement = st.number_input("Enter the displacement value")
-horsepower = st.number_input("Enter the horsepower value")
-weight = st.number_input("Enter the weight value")
-acceleration = st.number_input("Enter the acceleration value")
-model_year = st.number_input("Enter the model year")
-origin = st.number_input("Enter the origin")
+cylinders = st.number_input("Enter the number of cylinders", min_value=3, max_value=12, value=6)
+displacement = st.number_input("Enter the displacement value", min_value=50.0, max_value=500.0, value=200.0)
+horsepower = st.number_input("Enter the horsepower value", min_value=30.0, max_value=250.0, value=100.0)
+weight = st.number_input("Enter the weight value", min_value=1500.0, max_value=6000.0, value=3000.0)
+acceleration = st.number_input("Enter the acceleration value", min_value=8.0, max_value=25.0, value=15.0)
+model_year = st.number_input("Enter the model year", min_value=70, max_value=82, value=76)
+origin = st.number_input("Enter the origin (1=USA, 2=Europe, 3=Japan)", min_value=1, max_value=3, value=1)
 
 if st.button("Predict Miles Per Gallon (mpg)"):
-
-    # Create DataFrame
+    # Create DataFrame with correct column names and order
     df = pd.DataFrame({
         "cylinders": [cylinders],
         "displacement": [displacement],
         "horsepower": [horsepower],
         "weight": [weight],
         "acceleration": [acceleration],
-        "model year": [model_year],
+        "model_year": [model_year],
         "origin": [origin]
     })
-
-    # Apply encoder
-if st.button("Predict Miles Per Gallon (mpg)"):
-
-    for col in encoder:
-        df[col] = encoder[col].transform(df[col])
-
-    prediction = model.predict(df)
-    st.success(f"Predicted mpg: {prediction[0]:.2f}")
+    
+    try:
+        # Make prediction
+        prediction = model.predict(df)
+        st.success(f"Predicted MPG: {prediction[0]:.2f} miles per gallon")
+        
+        # Display input summary
+        st.info("Input Summary:")
+        st.dataframe(df)
+    except Exception as e:
+        st.error(f"Error making prediction: {e}")
+        st.error("Please check that all input values are valid.")
