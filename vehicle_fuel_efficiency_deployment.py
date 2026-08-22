@@ -36,14 +36,14 @@ model_year = st.number_input("Enter the model year", min_value=70, max_value=82,
 origin = st.number_input("Enter the origin (1=USA, 2=Europe, 3=Japan)", min_value=1, max_value=3, value=1)
 
 if st.button("Predict Miles Per Gallon (mpg)"):
-    # Create DataFrame with correct column names and order
+    # Create DataFrame with feature names matching training data
     df = pd.DataFrame({
         "cylinders": [cylinders],
         "displacement": [displacement],
         "horsepower": [horsepower],
         "weight": [weight],
         "acceleration": [acceleration],
-        "model_year": [model_year],
+        "model year": [model_year],
         "origin": [origin]
     })
     
